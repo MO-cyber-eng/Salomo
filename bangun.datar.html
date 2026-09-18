@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalkulator Luas Bangun Datar</title>
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: light dark; }
+    html { font-family: Inter, system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100 font-sans antialiased">
+
+  <!-- HEADER -->
+  <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur-sm">
+    <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+      <h1 class="text-xl font-bold tracking-tight text-white">Kalkulator Luas</h1>
+      <span class="text-xs font-mono text-emerald-400 bg-emerald-950/80 border border-emerald-800/50 px-2.5 py-1 rounded-full">Bangun Datar</span>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="max-w-5xl mx-auto px-6 py-10">
+    <div class="grid md:grid-cols-12 gap-8">
+      
+      <!-- KOLOM KIRI: KONFIGURASI & INPUT -->
+      <div class="md:col-span-7 space-y-6">
+        
+        <!-- Pilihan Bangun Datar & Satuan -->
+        <section class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 space-y-5">
+          <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">01. Konfigurasi</h2>
+          
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label for="shape" class="block text-xs font-medium text-slate-300 mb-2">Pilih Bangun Datar</label>
+              <select id="shape" class="w-full rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:border-emerald-500 focus:ring-emerald-500 p-2.5">
+                <option value="persegi">Persegi</option>
+                <option value="persegi_panjang">Persegi Panjang</option>
+                <option value="segitiga">Segitiga</option>
+                <option value="lingkaran">Lingkaran</option>
+                <option value="jajar_genjang">Jajar Genjang</option>
+                <option value="trapesium">Trapesium</option>
+                <option value="belah_ketupat">Belah Ketupat</option>
+                <option value="layang_layang">Layang-Layang</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="satuan" class="block text-xs font-medium text-slate-300 mb-2">Satuan Panjang</label>
+              <select id="satuan" class="w-full rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:border-emerald-500 focus:ring-emerald-500 p-2.5">
+                <option value="cm">cm</option>
+                <option value="m">m</option>
+                <option value="mm">mm</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Input Parameter -->
+        <section class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 space-y-6">
+          <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">02. Parameter</h2>
+          
+          <form id="paramForm" class="grid sm:grid-cols-2 gap-4">
+            <!-- Input dinamis akan dirender di sini -->
+          </form>
+
+          <div class="flex items-center gap-3 pt-2">
+            <button id="hitungBtn" class="flex-1 py-3 rounded-xl bg-emerald-500 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/10 hover:bg-emerald-400 active:scale-[.98] transition">Hitung Luas</button>
+            <button id="resetBtn" type="button" class="px-5 py-3 rounded-xl bg-slate-900 text-slate-300 font-semibold text-sm border border-slate-700 hover:bg-slate-800 transition">Reset</button>
+          </div>
+
+          <div id="notif" class="hidden text-sm"></div>
+        </section>
+
+      </div>
+
+      <!-- KOLOM KANAN: RUMUS & HASIL -->
+      <div class="md:col-span-5 space-y-6">
+        
+        <!-- Kartu Hasil Utama -->
+        <section class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 space-y-4">
+          <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">03. Hasil Perhitungan</h2>
+          
+          <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-1">
+            <span class="text-xs font-medium text-slate-400 uppercase tracking-widest">Luas Area</span>
+            <p id="hasilText" class="text-3xl sm:text-4xl font-extrabold text-white font-mono">—</p>
+          </div>
+          
+          <p id="detailText" class="text-xs text-center text-slate-400">Isi parameter lalu klik <em>Hitung Luas</em>.</p>
+        </section>
+
+        <!-- Kartu Rumus -->
+        <section class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 space-y-3">
+          <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">Rumus Bangun Datar</h3>
+          <p id="rumusText" class="text-base font-semibold text-emerald-300 font-mono">—</p>
+          <ul id="catatan" class="text-xs text-slate-400 space-y-1 list-disc list-inside border-t border-slate-700/50 pt-3"></ul>
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="max-w-5xl mx-auto px-6 py-6 border-t border-slate-800 text-xs text-slate-500">
+    Latihan jQuery
+  </footer>
+
+  <!-- SCRIPT SAMA PERSIS DENGAN KODE SEBELUMNYA -->
+  <script>
+    // Konfigurasi bangun datar: label field, placeholder, dan fungsi perhitungan
+    const SHAPES = {
+      persegi: {
+        name: 'Persegi',
+        fields: [
+          { key: 'sisi', label: 'Sisi', placeholder: 'contoh: 5' }
+        ],
+        formula: (p) => p.sisi ** 2,
+        formulaText: 'L = s × s',
+        notes: ['s = panjang sisi']
+      },
+      persegi_panjang: {
+        name: 'Persegi Panjang',
+        fields: [
+          { key: 'panjang', label: 'Panjang', placeholder: 'contoh: 8' },
+          { key: 'lebar', label: 'Lebar', placeholder: 'contoh: 5' }
+        ],
+        formula: (p) => p.panjang * p.lebar,
+        formulaText: 'L = p × l',
+        notes: ['p = panjang, l = lebar']
+      },
+      segitiga: {
+        name: 'Segitiga',
+        fields: [
+          { key: 'alas', label: 'Alas', placeholder: 'contoh: 10' },
+          { key: 'tinggi', label: 'Tinggi', placeholder: 'contoh: 6' }
+        ],
+        formula: (p) => 0.5 * p.alas * p.tinggi,
+        formulaText: 'L = 1/2 × a × t',
+        notes: ['a = alas, t = tinggi']
+      },
+      lingkaran: {
+        name: 'Lingkaran',
+        fields: [
+          { key: 'jari', label: 'Jari-jari (r)', placeholder: 'contoh: 7' }
+        ],
+        formula: (p) => Math.PI * p.jari * p.jari,
+        formulaText: 'L = π × r²',
+        notes: ['Gunakan r = jari-jari']
+      },
+      jajar_genjang: {
+        name: 'Jajar Genjang',
+        fields: [
+          { key: 'alas', label: 'Alas', placeholder: 'contoh: 12' },
+          { key: 'tinggi', label: 'Tinggi', placeholder: 'contoh: 5' }
+        ],
+        formula: (p) => p.alas * p.tinggi,
+        formulaText: 'L = a × t',
+        notes: ['a = alas, t = tinggi (tegak lurus alas)']
+      },
+      trapesium: {
+        name: 'Trapesium',
+        fields: [
+          { key: 'sisi_sejajar_1', label: 'Sisi Sejajar 1 (a)', placeholder: 'contoh: 10' },
+          { key: 'sisi_sejajar_2', label: 'Sisi Sejajar 2 (b)', placeholder: 'contoh: 6' },
+          { key: 'tinggi', label: 'Tinggi (t)', placeholder: 'contoh: 4' }
+        ],
+        formula: (p) => 0.5 * (p.sisi_sejajar_1 + p.sisi_sejajar_2) * p.tinggi,
+        formulaText: 'L = 1/2 × (a + b) × t',
+        notes: ['a & b = sisi-sisi sejajar, t = tinggi']
+      },
+      belah_ketupat: {
+        name: 'Belah Ketupat',
+        fields: [
+          { key: 'diagonal1', label: 'Diagonal 1 (d1)', placeholder: 'contoh: 10' },
+          { key: 'diagonal2', label: 'Diagonal 2 (d2)', placeholder: 'contoh: 8' }
+        ],
+        formula: (p) => 0.5 * p.diagonal1 * p.diagonal2,
+        formulaText: 'L = 1/2 × d1 × d2',
+        notes: ['d1 & d2 = diagonal']
+      },
+      layang_layang: {
+        name: 'Layang-Layang',
+        fields: [
+          { key: 'diagonal1', label: 'Diagonal 1 (d1)', placeholder: 'contoh: 12' },
+          { key: 'diagonal2', label: 'Diagonal 2 (d2)', placeholder: 'contoh: 7' }
+        ],
+        formula: (p) => 0.5 * p.diagonal1 * p.diagonal2,
+        formulaText: 'L = 1/2 × d1 × d2',
+        notes: ['d1 & d2 = diagonal']
+      }
+    };
+
+    // Utilitas
+    function numberOrNaN(value) {
+      const n = parseFloat(String(value).replace(',', '.'));
+      return isNaN(n) ? NaN : n;
+    }
+
+    function formatArea(value, unit) {
+      if (!isFinite(value)) return '—';
+      const v = Math.round(value * 1000) / 1000;
+      const sep = (v % 1 === 0) ? 0 : (v * 10 % 1 === 0 ? 1 : (v * 100 % 1 === 0 ? 2 : 3));
+      return v.toLocaleString('id-ID', { minimumFractionDigits: sep, maximumFractionDigits: 3 }) + ` ${unit}²`;
+    }
+
+    function renderFields(shapeKey) {
+      const cfg = SHAPES[shapeKey];
+      const $form =$('#paramForm');
+      $form.empty();
+      cfg.fields.forEach(f => {
+        const fieldId = `field_${f.key}`;
+        const html = `
+          <div class="space-y-1.5">
+            <label for="${fieldId}" class="block text-xs font-medium text-slate-300">${f.label}</label>
+            <input id="${fieldId}" name="${f.key}" type="number" step="any" inputmode="decimal" placeholder="${f.placeholder}" class="w-full rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-600 focus:border-emerald-500 focus:ring-emerald-500 p-2.5" />
+          </div>`;
+        $form.append(html);
+      });
+
+      // tampilkan rumus & catatan
+      $('#rumusText').text(cfg.formulaText);
+      const $notes = $('#catatan').empty();
+      cfg.notes.forEach(n => $notes.append(`<li>${n}</li>`));
+
+      // reset hasil
+      $('#hasilText').text('—');
+      $('#detailText').text('Isi parameter lalu klik Hitung Luas.');
+      $('#notif').addClass('hidden').removeClass('p-3 rounded-xl bg-red-950/80 border border-red-800 text-red-300').text('');
+    }
+
+    function collectParams(shapeKey) {
+      const cfg = SHAPES[shapeKey];
+      const params = {};
+      let valid = true;
+      let firstInvalidLabel = null;
+
+      cfg.fields.forEach(f => {
+        const val = numberOrNaN($(`[name=${f.key}]`).val());
+        if (!isFinite(val) || val <= 0) {
+          valid = false;
+          firstInvalidLabel = firstInvalidLabel || f.label;
+        }
+        params[f.key] = val;
+      });
+
+      return { params, valid, firstInvalidLabel };
+    }
+
+    function showError(msg) {
+      $('#notif').removeClass('hidden').addClass('p-3 rounded-xl bg-red-950/80 border border-red-800 text-red-300 text-xs').text(msg);
+    }
+
+    $(function () {
+      // init
+      renderFields($('#shape').val());
+
+      // events
+      $('#shape').on('change', function () { renderFields(this.value); });
+
+      $('#resetBtn').on('click', function () {
+        renderFields($('#shape').val());
+        $('#paramForm').find('input').val('');
+      });
+
+      $('#hitungBtn').on('click', function (e) {
+        e.preventDefault();
+        const shapeKey = $('#shape').val();
+        const satuan = $('#satuan').val();
+        const cfg = SHAPES[shapeKey];
+        const { params, valid, firstInvalidLabel } = collectParams(shapeKey);
+
+        if (!valid) {
+          showError(`Nilai pada \"${firstInvalidLabel}\" harus berupa angka positif.`);
+          $('#hasilText').text('—');
+          $('#detailText').text('Periksa kembali input Anda.');
+          return;
+        }
+
+        try {
+          const area = cfg.formula(params);
+          const pretty = formatArea(area, satuan);
+          $('#hasilText').text(pretty);
+          const detail = Object.entries(params)
+            .map(([k, v]) => `${k.replaceAll('_',' ')} = ${v}`)
+            .join(', ');
+          $('#detailText').text(`${cfg.name}: ${detail}`);
+          $('#notif').addClass('hidden').text('');
+        } catch (err) {
+          showError('Terjadi kesalahan saat menghitung.');
+          console.error(err);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
